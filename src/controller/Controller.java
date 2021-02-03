@@ -8,6 +8,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import model.Avatar;
 import model.Background;
+import model.Obstacle;
 
 public class Controller {
 
@@ -16,6 +17,7 @@ public class Controller {
                 "bg6.jpg", "bg5.jpg", "bg4.jpg", "bg3.jpg", "bg2.jpg", "bg1.png"};
     // Spielfigur
     private Avatar avatar;
+    private Obstacle car1;
 
     @FXML
     private GridPane Game;
@@ -39,6 +41,12 @@ public class Controller {
         avatar = new Avatar("images/frog_50_38_lila.png");
         // Spielfigur dem Grid hinzufügen in Spalte 0, Zeile 13
         Game.add(avatar, 0, 13);
+
+        // Hindernis erzeugen und Link zum Bild übergeben
+        car1 = new Obstacle("images/Car_Red.png");
+        // Spielfigur dem Grid hinzufügen in Spalte 0, Zeile 13
+        Game.add(car1, 0, 12);
+
     }
 
     // Welche Tasten wurden gedrückt, Aufruf der Bewegungsmethoden des Avatar-Objekts
@@ -46,6 +54,7 @@ public class Controller {
         //System.out.println("Pressed key text: " + event.getCode());
         if (event.getCode() == KeyCode.RIGHT){
             avatar.moveRight();
+            car1.moveRight();
         }
         if (event.getCode() == KeyCode.LEFT){
             avatar.moveLeft();
@@ -58,6 +67,8 @@ public class Controller {
         }
 
     }
+
+
 
 
 }
