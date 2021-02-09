@@ -28,20 +28,20 @@ public class Obstacle extends ImageView {
         this.y_coordinate = this.getTranslateY();
     }
 
-    public void moveRight() {
-        System.out.println("Aktuelle x-Koordinate AUTO: " + this.getTranslateX());
-        System.out.println("Aktuelle y-Koordinate: " + this.getTranslateY());
-        for (int i = 0; i < 705; i++) {
-            if (this.getTranslateX() <= 705) {
-                System.out.println("Ifzwei" + i);
-                this.setTranslateX(x_coordinate + i);
-                this.set_x_coordinate();}
+//    public void moveRight() {
+//        System.out.println("Aktuelle x-Koordinate AUTO: " + this.getTranslateX());
+//        System.out.println("Aktuelle y-Koordinate: " + this.getTranslateY());
+//        for (int i = 0; i < 705; i++) {
+//            if (this.getTranslateX() <= 705) {
+//                System.out.println("Ifzwei" + i);
+//                this.setTranslateX(x_coordinate + i);
+//                this.set_x_coordinate();}
 //            else {
 //                this.setTranslateX(0);
 //            }
-
-        }
-    }
+//
+//        }
+//    }
 //    public void moveLeft() {
 //        System.out.println("Aktuelle x-Koordinate: " + this.getTranslateX());
 //        System.out.println("Aktuelle y-Koordinate: " + this.getTranslateY());

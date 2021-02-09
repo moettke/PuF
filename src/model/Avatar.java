@@ -1,5 +1,6 @@
 package model;
 
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -14,8 +15,8 @@ public class Avatar extends ImageView {
 
     public Avatar(String img_url){
         this.img_url = img_url;
-        this.x_coordinate = 0;
-        this.y_coordinate = 0;
+//        this.x_coordinate = 0;
+//        this.y_coordinate = 0;
         this.img = new Image(img_url);
         this.setImage(img);
         this.speed = 55.0;
@@ -29,6 +30,12 @@ public class Avatar extends ImageView {
     }
 
     public void moveRight() {
+        // die aktuellen Koordinaten der Obstacles ermitteln
+        double x = this.translateXProperty().doubleValue();
+        double y = this.translateYProperty().doubleValue();
+        System.out.println("X: " + x);
+        System.out.println("Y: " + y);
+
         System.out.println("Aktuelle x-Koordinate: " + this.getTranslateX());
         System.out.println("Aktuelle y-Koordinate: " + this.getTranslateY());
         if (this.getTranslateX() <= 705){
@@ -45,16 +52,21 @@ public class Avatar extends ImageView {
         }
     }
     public void moveUp() {
-        System.out.println("Aktuelle x-Koordinate: " + this.getTranslateX());
-        System.out.println("Aktuelle y-Koordinate: " + this.getTranslateY());
+
+
+//        System.out.println("LayoutX: " + this.getX());
+//        System.out.println("LayoutY: " + this.getY());
+        System.out.println("Aktuelle x-Koordinate: " + (0 -this.getTranslateX()));
+        System.out.println("Aktuelle y-Koordinate: " + (670 + this.getTranslateY()));
         if (this.getTranslateY() >= -665) {
             this.setTranslateY(y_coordinate - speed);
             this.set_y_coordinate();
         }
     }
     public void moveDown() {
+        System.out.println(this.localToScene(this.getBoundsInLocal()));
         System.out.println("Aktuelle x-Koordinate: " + this.getTranslateX());
-        System.out.println("Aktuelle y-Koordinate: " + this.getTranslateY());
+        System.out.println("Aktuelle y-Koordinate: " + (670 + this.getTranslateY()));
         if (this.getTranslateY() < 0) {
             this.setTranslateY(y_coordinate + speed);
             this.set_y_coordinate();
