@@ -1,169 +1,343 @@
 package controller;
 
 import javafx.animation.PathTransition;
-import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.shape.*;
+import javafx.scene.shape.HLineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.util.Duration;
 import model.Avatar;
-import model.Background;
 import model.Obstacle;
 
-public class Controller {
+import java.util.Random;
 
-    // String Array mit den Bildernamen für den Hintergrund
-    private String[] images = {"bg13.png", "bg12.jpg", "bg11.jpg", "bg10.jpg", "bg9.jpg", "bg8.jpg", "bg7.png",
-                "bg6.jpg", "bg5.jpg", "bg4.jpg", "bg3.jpg", "bg2.jpg", "bg1.png"};
-    // Spielfigur
-    private Avatar avatar;
-    private Obstacle car1, car4;
-    private Obstacle car2;
-    private Obstacle car3;
+
+public class Controller {
+    // Spielfigur erzeugen und Link zum Bild übergeben
+    private Avatar frog;
+    private int numberObstacles = 5;
+    Path[] paths = new Path[numberObstacles];
+    Path[] pathsFriendly = new Path[5];
+//    PathTransition t = new PathTransition();
+//    PathTransition t2 = new PathTransition();
+    private Obstacle[] obstacles = new Obstacle[numberObstacles];
+    private Obstacle[] friendlyObstacles = new Obstacle[5];
+    private PathTransition[] transitions = new PathTransition[numberObstacles];
+    private PathTransition[] friendlyTransitions = new PathTransition[5];
+//    private ImageView car;
+//    private ImageView car2;
+    Random random = new Random();
+    double hue[] = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
+
+
 
     @FXML
     private Pane Game;
 
-    public void initialize() {
+
+
+    //    der Controller kann eine initialize()-Methode definieren, die einmal auf einem
+//    implementierenden Controller aufgerufen wird, wenn der Inhalt des zugehörigen fxml
+//    Dokuments  vollständig geladen wurde Dies ermöglicht der implementierenden Klasse,
+//    alle notwendigen Nachbearbeitungen am Inhalt durchzuführen.
+    @FXML
+    private void initialize() {
+
         Game.setStyle("-fx-background-image: url('images/bg_gesamt.png')");
-        //GridPane wird mit 1 Spalte und 13 Zeilen befüllt
-//        for(int row=0;row<1;row++){
-//            for(int col=1;col<14;col++){
-//                //Zeilenhöhe auf 55px setzen
-//                RowConstraints rc = new RowConstraints();
-//                rc.setMinHeight(55);
-//                rc.setPrefHeight(55);
-//                Game.getRowConstraints().addAll(rc);
-//                // Bildernamen aus dem Array holen und neues Bildobjekt erzeugen
-////                Image img = new Image("images/" + images[col-1]);
-//                //Bilder dem Grid hinzufügen
-////                Game.add(new Background(img), row, col);
-//            }
-//        }
-        // Spielfigur erzeugen und Link zum Bild übergeben
-        avatar = new Avatar("images/frog_50_38_lila.png");
-        avatar.setLayoutX(0);
-        avatar.setLayoutY(725);
-        // Spielfigur dem Grid hinzufügen in Spalte 0, Zeile 13
-        Game.getChildren().add(avatar);
+        frog = new Avatar("images/frog_50_38_lila.png");
+        //car = new ImageView("images/car_green_40_r.png");
+//        int randomIndex = (int) (Math.random()*(9 - 0)) + 0;
+//        System.out.println(randomIndex);
+//        obstacles[0] = new Obstacle("images/car_green_40_r.png");
+//        obstacles[0].changeColor(hue[randomIndex]);
+//        obstacles[1] = new Obstacle("images/car_green_40_r.png");
+//        obstacles[1].changeColor(hue[randomIndex]);
+//        obstacles[2] = new Obstacle("images/car_red_40.png");
+//        obstacles[3] = new Obstacle("images/car_red_40.png");
+        // car.relocate(500, 500);
+        frog.setFocusTraversable(true);
+        frog.relocate(0, 725);
 
-        // Hindernis erzeugen und Link zum Bild übergeben
-        car1 = new Obstacle("images/car_red_40.png");
-        car2 = new Obstacle("images/car_red_40.png");
-        car3 = new Obstacle("images/car_green_40_r.png");
-        car4 = new Obstacle("images/car_red_40.png");
-        // Spielfigur dem Grid hinzufügen in Spalte 0, Zeile 13
-        Game.getChildren().add(car1);
-        Game.getChildren().add(car2);
-        Game.getChildren().add(car3);
-        Game.getChildren().add(car4);
+        //Game.getChildren().add(car);
+        // Pfade und Transitions erstellen
+        createObstacle();
+        createFriendlyObstacle();
+        createPathLeftToRight();
+        createPathRightToLeft();
+        createPathLeftToRightFriendly();
+        createTransition();
+        createTransitionFriendly();
+        // Hindernisse hinzufügen
+        for (int i = 0; i < numberObstacles; i++) {
+            Game.getChildren().add(obstacles[i]);
+        }
 
-//        Line line = new Line();
-//        line.setStartX(820);
-//        line.setStartY(20);
-//        line.setEndX(-100);
-//        line.setEndY(20);
-//
-//        Line line2 = new Line();
-//        line2.setStartX(820);
-//        line2.setStartY(0);
-//        line2.setEndX(-100);
-//        line2.setEndY(0);
+        // freundliche Hindernisse hinzufügen
+        for (int i = 0; i < 5; i++) {
+            Game.getChildren().add(friendlyObstacles[i]);
+        }
+        // Avatar hinzufügen
+        Game.getChildren().add(frog);
 
-        Path path = new Path();
-        path.getElements().add(new MoveTo(-90,690));
-        path.getElements().add(new HLineTo(900));
+        // Starte alle Transitions
+        for (int i = 0; i < numberObstacles; i++) {
+            transitions[i].play();
+        }
 
-        Path path2 = new Path();
-        path2.getElements().add(new MoveTo(900,525));
-        path2.getElements().add(new HLineTo(-90));
-//        Rectangle r = new Rectangle(400,400);
-//        Circle circle = new Circle(100);
-//        PathTransition t = new PathTransition();
-//        t.setNode(car1);
-//        t.setDuration(Duration.seconds(7));
-//        t.setPath(line);
+        // Starte alle friendlyTransitions
+        for (int i = 0; i < 5; i++) {
+            friendlyTransitions[i].play();
+        }
+
+
+
+
+
+
+
+//        Path path = new Path();
+//        path.getElements().add(new MoveTo(-90, 690));
+//        path.getElements().add(new HLineTo(900));
+
+
+//        t.setNode(car);
+//        t.setDuration(Duration.seconds(5));
+//        t.setPath(path);
+//        t.setCycleCount(PathTransition.INDEFINITE);
+//        t.play();
+
+//        t.setNode(cars[0]);
+//        t.setDuration(Duration.seconds(5));
+//        t.setPath(createPath()[0]);
 //        t.setCycleCount(PathTransition.INDEFINITE);
 //        t.play();
 //
-//        PathTransition t2 = new PathTransition();
-//        t2.setNode(car2);
+//        t2.setNode(cars[1]);
 //        t2.setDuration(Duration.seconds(6));
-//        t2.setPath(line2);
+//        t2.setPath(createPath()[1]);
 //        t2.setCycleCount(PathTransition.INDEFINITE);
 //        t2.play();
 
-        PathTransition t3 = new PathTransition();
-        t3.setNode(car3);
-        t3.setDuration(Duration.seconds(5));
-        t3.setPath(path);
-        t3.setCycleCount(PathTransition.INDEFINITE);
-        t3.play();
 
-        PathTransition t4 = new PathTransition();
-        t4.setNode(car4);
-        t4.setDuration(Duration.seconds(5));
-        t4.setPath(path2);
-        t4.setCycleCount(PathTransition.INDEFINITE);
-        t4.play();
 
+
+
+        // EventHandler für die Bewegung des Avatars
+        frog.addEventHandler(KeyEvent.KEY_PRESSED,
+                keyEvent -> {
+                    switch (keyEvent.getCode()) {
+                        case UP:
+                            frog.moveUp();
+                            break;
+                        case DOWN:
+                            frog.moveDown();
+                            break;
+                        case LEFT:
+                            frog.moveLeft();
+                            break;
+                        case RIGHT:
+                            frog.moveRight();
+                            break;
+                    }
+                    //checkCollision();
+
+                });
+
+        // Changelistener auf die translateXProperty von cars[]
+        for (int i = 0; i < numberObstacles; i++) {
+            obstacles[i].translateXProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        checkCollision();
+                       // System.out.println("hahaha");
+
+                    }
+            );
+        }
+
+        // Changelistener auf die translateXProperty von cars[]
+        for (int i = 0; i < 5; i++) {
+            friendlyObstacles[i].translateXProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        checkCollision();
+                        // System.out.println("hahaha");
+
+                    }
+            );
+        }
+
+
+        // andere Schreibweise
+//        car.translateXProperty().addListener(new ChangeListener<Number>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Number> property, Number oldValue, Number newValue) {
+//                System.out.println(oldValue + " " + newValue);
+//            }
+//        });
 
 
     }
 
-    // Welche Tasten wurden gedrückt, Aufruf der Bewegungsmethoden des Avatar-Objekts
-    public void handleOnKeyPressed(KeyEvent event)    {
-        //System.out.println("Pressed key text: " + event.getCode());
-        if (event.getCode() == KeyCode.RIGHT){
-            avatar.moveRight();
-
-        }
-        if (event.getCode() == KeyCode.LEFT){
-            avatar.moveLeft();
-        }
-        if (event.getCode() == KeyCode.UP){
-            avatar.moveUp();
-            // Postition des Avatars im Koordinatesystem der Scene bestimmen
-            Bounds bounds = avatar.getBoundsInLocal();
-            Bounds screenBounds = avatar.localToScene(bounds);
-            int x_avatar = (int) screenBounds.getMinX();
-            int y_avatar = (int) screenBounds.getMinY();
-            int x = car4.translateXProperty().intValue();
-            int y = car4.translateYProperty().intValue();
-//            int width = (int) screenBounds.getWidth();
-//            int height = (int) screenBounds.getHeight();
-            System.out.println(x + " " +y );
-            System.out.println(x_avatar + " " +y_avatar );
-            // Kollision melden
-            if (y_avatar == y && x_avatar == x){
-                // double x = car4.translateXProperty().doubleValue();
-
-                System.out.println("crash: ");
-
+    public void checkCollision() {
+        boolean collision = false;
+        for (int i = 0; i < numberObstacles; i++) {
+            if (obstacles[i].getBoundsInParent().intersects(frog.getBoundsInParent())) {
+                collision = true;
+                transitions[i].stop();
+//                System.out.println("if " + i);
 
             }
-//
-        }
-        if (event.getCode() == KeyCode.DOWN){
-            avatar.moveDown();
-        }
+            if (friendlyObstacles[i].getBoundsInParent().intersects(frog.getBoundsInParent())) {
+                collision = true;
+                // fahre auf den freundlichen Hindernissen mit
+                double obstWidth = friendlyObstacles[i].boundsInParentProperty().get().getWidth();
 
-        if (event.getCode() == KeyCode.ENTER){
-            // die aktuellen Koordinaten der Obstacles ermitteln
+                frog.setTranslateX(friendlyObstacles[i].getTranslateX() + (obstWidth/2));
+//                System.out.println("if friendly " + i);
+
+            }
+//            else {
+//                System.out.println("TOT!");
+//            }
 
         }
+        if (collision) {
+//            System.out.println("Getroffen");
 
+        } else {
+
+           // System.out.println("nicht Getroffen");
+        }
     }
 
+    // alle Hindernisse erstellen
+    private void createObstacle() {
+        for (int i = 0; i < numberObstacles; i++) {
+            int randomIndex = (int) (Math.random()*(9 - 0)) + 0;
+            if (i < 3) {
+                obstacles[i] = new Obstacle("images/car_green_40_r.png", false);
+            }
+            else {
+                obstacles[i] = new Obstacle("images/car_red_40.png", false);
+            }
+            obstacles[i].changeColor(hue[randomIndex]);
+        }
+    }
+
+    // alle Hindernisse erstellen
+    private void createFriendlyObstacle() {
+        for (int i = 0; i < 5; i++) {
+            int randomIndex = (int) (Math.random()*(9 - 0)) + 0;
+            if(i == 1 || i == 3) {
+                friendlyObstacles[i] = new Obstacle("images/tree_150.png", true);
+            }
+            else{
+                friendlyObstacles[i] = new Obstacle("images/tree_300.png", true);
+            }
+
+            friendlyObstacles[i].changeColor(hue[randomIndex]);
+        }
+    }
+
+    // erstelle alle Pfade für die Pfandtransition
+    private void createPathLeftToRight() {
+        int position = 0;
+        for (int i = 0; i < 3; i++) {
+            Path path = new Path();
+            // eine Ebene nach oben rücken
+            int y = 690 - position;
+            //System.out.println(y);
+            // MoveTo(Startpunkt x und y)
+            path.getElements().add(new MoveTo(-90, y));
+            // Endpunkt
+            path.getElements().add(new HLineTo(900));
+            paths[i] = path;
+            position = position + 60;
+        }
+    }
+
+    // erstelle alle Pfade für die Pfandtransition
+    private void createPathRightToLeft() {
+        int position = 0;
+        for (int i = 3; i < numberObstacles; i++) {
+            Path path = new Path();
+            // eine Ebene nach oben rücken
+            int y = 525 - position;
+            //System.out.println(y);
+            // MoveTo(Startpunkt x und y)
+            path.getElements().add(new MoveTo(900, y));
+            // Endpunkt
+            path.getElements().add(new HLineTo(-90));
+            paths[i] = path;
+            position = position + 60;
+        }
+    }
+
+    // erstelle alle Pfade für die Pfandtransition
+    private void createPathLeftToRightFriendly() {
+        int position = 0;
+        for (int i = 0; i < 5; i++) {
+            Path path = new Path();
+            // eine Ebene nach oben rücken
+            int y = 360 - position;
+            //System.out.println(y);
+            // MoveTo(Startpunkt x und y)
+            if(i == 1 || i == 3){
+                path.getElements().add(new MoveTo(0, y));
+                // Endpunkt
+                path.getElements().add(new HLineTo(700));
+
+            }
+            else{
+                path.getElements().add(new MoveTo(-150, y));
+                // Endpunkt
+                path.getElements().add(new HLineTo(1150));
+            }
 
 
 
+            pathsFriendly[i] = path;
+            position = position + 55;
+        }
+    }
 
+    // erstelle alle Pfade für die Pfandtransition
+    private void createTransition() {
 
+        for (int i = 0; i < numberObstacles; i++) {
+            // zufällige Geschwindigkeit der Hindernisse
+            int randomSeconds = (int) (Math.random()*(7 - 3)) + 3;
+            //System.out.println(seconds);
+            PathTransition t = new PathTransition();
+            t.setNode(obstacles[i]);
+            t.setDuration(Duration.seconds(randomSeconds));
+            t.setPath(paths[i]);
+            //t.setCycleCount(2);
+            t.setCycleCount(PathTransition.INDEFINITE);
+            transitions[i] = t;
+        }
+    }
+
+    // erstelle alle Pfade für die Pfandtransition
+    private void createTransitionFriendly() {
+
+        for (int i = 0; i < 5; i++) {
+            // zufällige Geschwindigkeit der Hindernisse
+            int randomSeconds = (int) (Math.random()*(7 - 5)) + 5;
+            //System.out.println(seconds);
+            PathTransition t = new PathTransition();
+            t.setNode(friendlyObstacles[i]);
+            t.setDuration(Duration.seconds(randomSeconds));
+            t.setPath(pathsFriendly[i]);
+            //t.setCycleCount(2);
+            t.setCycleCount(PathTransition.INDEFINITE);
+            if(i == 1 || i == 3){
+                t.setAutoReverse(true);
+            }
+
+            friendlyTransitions[i] = t;
+        }
+    }
 }
