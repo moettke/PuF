@@ -12,14 +12,29 @@ public class Avatar extends ImageView {
     private Bounds bounds;
     private Image img;
     private double speed;
+    private boolean target;
 
-    public Avatar(String img_url){
-        this.imgUrl = img_url;
-        this.img = new Image(img_url);
+    public Avatar(String imgUrl){
+        this.imgUrl = imgUrl;
+        this.img = new Image(imgUrl);
         this.setImage(img);
         this.speed = 55.0;
+        this.target = false;
     }
     // Methoden
+
+    public void setImgUrl(String imgUrl){
+        this.imgUrl = imgUrl;
+        this.img = new Image(imgUrl);
+        this.setImage(img);
+    }
+    public void setTarget(boolean target){
+        this.target = target;
+    }
+    public boolean isTarget(){
+        return this.target;
+    }
+    // Movement
     public void moveRight() {
 //        bounds = this.getBoundsInParent();
 //        System.out.println(bounds.getMinX()+55);

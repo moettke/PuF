@@ -4,6 +4,10 @@
            xmlns:fx="http://javafx.com/fxml">
 
     <Pane fx:id="Game" >
+        <!-- style="-fx-background-color: blue;"-->
+        <Pane fx:id="danger" minWidth="800" minHeight="275" layoutX="0" layoutY="110"  >
+
+        </Pane>
 
     </Pane>
 

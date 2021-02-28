@@ -12,31 +12,32 @@ import javafx.util.Duration;
 import model.Avatar;
 import model.Obstacle;
 
+import java.beans.EventHandler;
 import java.util.Random;
 
 
 public class Controller {
     // Spielfigur erzeugen und Link zum Bild übergeben
     private Avatar frog;
+    private ImageView fly;
+    private ImageView pot;
     private int numberObstacles = 5;
     Path[] paths = new Path[numberObstacles];
     Path[] pathsFriendly = new Path[5];
-//    PathTransition t = new PathTransition();
+    //    PathTransition t = new PathTransition();
 //    PathTransition t2 = new PathTransition();
     private Obstacle[] obstacles = new Obstacle[numberObstacles];
     private Obstacle[] friendlyObstacles = new Obstacle[5];
     private PathTransition[] transitions = new PathTransition[numberObstacles];
     private PathTransition[] friendlyTransitions = new PathTransition[5];
-//    private ImageView car;
+    //    private ImageView car;
 //    private ImageView car2;
     Random random = new Random();
-    double hue[] = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
-
+    double hue[] = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
 
 
     @FXML
-    private Pane Game;
-
+    private Pane Game, danger;
 
 
     //    der Controller kann eine initialize()-Methode definieren, die einmal auf einem
@@ -48,6 +49,8 @@ public class Controller {
 
         Game.setStyle("-fx-background-image: url('images/bg_gesamt.png')");
         frog = new Avatar("images/frog_50_38_lila.png");
+        fly = new ImageView("images/fliege.png");
+        pot = new ImageView("images/pot_50.png");
         //car = new ImageView("images/car_green_40_r.png");
 //        int randomIndex = (int) (Math.random()*(9 - 0)) + 0;
 //        System.out.println(randomIndex);
@@ -60,6 +63,8 @@ public class Controller {
         // car.relocate(500, 500);
         frog.setFocusTraversable(true);
         frog.relocate(0, 725);
+        fly.relocate(700, 65);
+        pot.relocate(700, 720);
 
         //Game.getChildren().add(car);
         // Pfade und Transitions erstellen
@@ -79,6 +84,8 @@ public class Controller {
         for (int i = 0; i < 5; i++) {
             Game.getChildren().add(friendlyObstacles[i]);
         }
+        Game.getChildren().add(fly);
+        Game.getChildren().add(pot);
         // Avatar hinzufügen
         Game.getChildren().add(frog);
 
@@ -91,11 +98,6 @@ public class Controller {
         for (int i = 0; i < 5; i++) {
             friendlyTransitions[i].play();
         }
-
-
-
-
-
 
 
 //        Path path = new Path();
@@ -122,9 +124,6 @@ public class Controller {
 //        t2.play();
 
 
-
-
-
         // EventHandler für die Bewegung des Avatars
         frog.addEventHandler(KeyEvent.KEY_PRESSED,
                 keyEvent -> {
@@ -142,7 +141,9 @@ public class Controller {
                             frog.moveRight();
                             break;
                     }
-                    //checkCollision();
+                    touchFly();
+                    touchPot();
+                    touchDanger();
 
                 });
 
@@ -151,7 +152,7 @@ public class Controller {
             obstacles[i].translateXProperty().addListener(
                     (observable, oldValue, newValue) -> {
                         checkCollision();
-                       // System.out.println("hahaha");
+                        // System.out.println("hahaha");
 
                     }
             );
@@ -161,7 +162,7 @@ public class Controller {
         for (int i = 0; i < 5; i++) {
             friendlyObstacles[i].translateXProperty().addListener(
                     (observable, oldValue, newValue) -> {
-                        checkCollision();
+                        checkCollisionFriendly();
                         // System.out.println("hahaha");
 
                     }
@@ -185,41 +186,70 @@ public class Controller {
         for (int i = 0; i < numberObstacles; i++) {
             if (obstacles[i].getBoundsInParent().intersects(frog.getBoundsInParent())) {
                 collision = true;
-                transitions[i].stop();
-//                System.out.println("if " + i);
-
+                gameOver();
+//                for (PathTransition elem : transitions) {
+//                    elem.pause();
+//
+//                }
             }
-            if (friendlyObstacles[i].getBoundsInParent().intersects(frog.getBoundsInParent())) {
-                collision = true;
-                // fahre auf den freundlichen Hindernissen mit
-                double obstWidth = friendlyObstacles[i].boundsInParentProperty().get().getWidth();
+        }
 
-                frog.setTranslateX(friendlyObstacles[i].getTranslateX() + (obstWidth/2));
-//                System.out.println("if friendly " + i);
+    }
 
-            }
-//            else {
-//                System.out.println("TOT!");
+    public boolean checkCollisionFriendly() {
+        boolean collision = false;
+        for (int i = 0; i < numberObstacles; i++) {
+                if (friendlyObstacles[i].getBoundsInParent().intersects(frog.getBoundsInParent())) {
+                    collision = true;
+                    // fahre auf den freundlichen Hindernissen mit und springe auf die Mitte
+                    double obstWidth = friendlyObstacles[i].boundsInParentProperty().get().getWidth();
+                    frog.setTranslateX(friendlyObstacles[i].getTranslateX() + (obstWidth / 2));
+                }
+
+        }
+        return collision;
+    }
+
+    public void touchDanger() {
+        if (frog.getBoundsInParent().intersects(danger.getBoundsInParent()) && !checkCollisionFriendly()) {
+            // wenn tot, stoppe alle friendly transitions
+//            for (PathTransition elem : friendlyTransitions) {
+//                elem.pause();
 //            }
-
+            gameOver();
+            //System.out.println("TotDanger");
         }
-        if (collision) {
-//            System.out.println("Getroffen");
 
-        } else {
+    }
 
-           // System.out.println("nicht Getroffen");
+    public void touchFly() {
+        if (frog.getBoundsInParent().intersects(fly.getBoundsInParent())) {
+            frog.setImgUrl("images/frog_50_38_turkis_fly.png");
+            frog.setTarget(true);
+            Game.getChildren().remove(fly);
+            System.out.println("gefressen");
         }
+
+    }
+
+    public void touchPot() {
+        if (frog.getBoundsInParent().intersects(pot.getBoundsInParent()) && frog.isTarget() == true) {
+            frog.setImgUrl("images/frog_50_38_lila.png");
+            frog.setTarget(false);
+            Game.getChildren().add(fly);
+            fly.relocate(715, 735);
+            System.out.println("abgelegt");
+        }
+
     }
 
     // alle Hindernisse erstellen
     private void createObstacle() {
         for (int i = 0; i < numberObstacles; i++) {
-            int randomIndex = (int) (Math.random()*(9 - 0)) + 0;
+            int randomIndex = (int) (Math.random() * (9 - 0)) + 0;
             if (i < 3) {
                 obstacles[i] = new Obstacle("images/car_green_40_r.png", false);
-            }
-            else {
+            } else {
                 obstacles[i] = new Obstacle("images/car_red_40.png", false);
             }
             obstacles[i].changeColor(hue[randomIndex]);
@@ -229,11 +259,10 @@ public class Controller {
     // alle Hindernisse erstellen
     private void createFriendlyObstacle() {
         for (int i = 0; i < 5; i++) {
-            int randomIndex = (int) (Math.random()*(9 - 0)) + 0;
-            if(i == 1 || i == 3) {
+            int randomIndex = (int) (Math.random() * (9 - 0)) + 0;
+            if (i == 1 || i == 3) {
                 friendlyObstacles[i] = new Obstacle("images/tree_150.png", true);
-            }
-            else{
+            } else {
                 friendlyObstacles[i] = new Obstacle("images/tree_300.png", true);
             }
 
@@ -284,18 +313,16 @@ public class Controller {
             int y = 360 - position;
             //System.out.println(y);
             // MoveTo(Startpunkt x und y)
-            if(i == 1 || i == 3){
+            if (i == 1 || i == 3) {
                 path.getElements().add(new MoveTo(0, y));
                 // Endpunkt
                 path.getElements().add(new HLineTo(700));
 
-            }
-            else{
+            } else {
                 path.getElements().add(new MoveTo(-150, y));
                 // Endpunkt
                 path.getElements().add(new HLineTo(1150));
             }
-
 
 
             pathsFriendly[i] = path;
@@ -308,7 +335,7 @@ public class Controller {
 
         for (int i = 0; i < numberObstacles; i++) {
             // zufällige Geschwindigkeit der Hindernisse
-            int randomSeconds = (int) (Math.random()*(7 - 3)) + 3;
+            int randomSeconds = (int) (Math.random() * (7 - 3)) + 3;
             //System.out.println(seconds);
             PathTransition t = new PathTransition();
             t.setNode(obstacles[i]);
@@ -325,7 +352,7 @@ public class Controller {
 
         for (int i = 0; i < 5; i++) {
             // zufällige Geschwindigkeit der Hindernisse
-            int randomSeconds = (int) (Math.random()*(7 - 5)) + 5;
+            int randomSeconds = (int) (Math.random() * (7 - 5)) + 5;
             //System.out.println(seconds);
             PathTransition t = new PathTransition();
             t.setNode(friendlyObstacles[i]);
@@ -333,11 +360,23 @@ public class Controller {
             t.setPath(pathsFriendly[i]);
             //t.setCycleCount(2);
             t.setCycleCount(PathTransition.INDEFINITE);
-            if(i == 1 || i == 3){
+            if (i == 1 || i == 3) {
                 t.setAutoReverse(true);
             }
 
             friendlyTransitions[i] = t;
         }
+    }
+
+    private void gameOver(){
+        for (PathTransition elem : transitions) {
+            elem.pause();
+        }
+        for (PathTransition elem : friendlyTransitions) {
+            elem.pause();
+        }
+
+        // frog.removeEventHandler(KeyEvent.KEY_PRESSED, this);
+
     }
 }
