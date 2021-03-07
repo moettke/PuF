@@ -1,16 +1,110 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.text.Font?>
 <StackPane fx:controller="controller.Controller"
            xmlns:fx="http://javafx.com/fxml">
 
-    <Pane fx:id="Game" >
+    <Pane fx:id="Game">
         <!-- style="-fx-background-color: blue;"-->
-        <Pane fx:id="danger" minWidth="800" minHeight="275" layoutX="0" layoutY="110"  >
+        <Pane fx:id="field" minWidth="800" minHeight="770" layoutX="0" layoutY="55" >
 
         </Pane>
+        <Pane fx:id="danger" minWidth="800" minHeight="275" layoutX="0" layoutY="110" >
+
+        </Pane>
+        <Label fx:id="pointsLabel" layoutX="740" layoutY="12"  style="-fx-text-fill: white;">
+            <font>
+                <Font name="Arial" size="30.0" />
+            </font>
+        </Label>
+
+        <ImageView fx:id="fly1" layoutX="10" layoutY="12">
+            <image>
+                <Image url="@/images/fliege.png" />
+            </image>
+        </ImageView>
+
+        <ImageView fx:id="fly2" layoutX="10" layoutY="12">
+            <image>
+                <Image url="@/images/fliege.png" />
+            </image>
+        </ImageView>
+
+        <ImageView fx:id="fly3" layoutX="10" layoutY="12">
+            <image>
+                <Image url="@/images/fliege.png" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="heart1" layoutX="10" layoutY="12">
+        <image>
+            <Image url="@/images/heart_green_35.png" />
+        </image>
+        </ImageView>
+
+        <ImageView fx:id="heart2" layoutX="55" layoutY="12">
+        <image>
+            <Image url="@/images/heart_green_35.png" />
+        </image>
+        </ImageView>
+
+        <ImageView fx:id="heart3" layoutX="100" layoutY="12">
+        <image>
+            <Image url="@/images/heart_green_35.png" />
+        </image>
+        </ImageView>
+
+        <ImageView fx:id="pot" layoutX="700" layoutY="720">
+        <image>
+            <Image url="@/images/pot_50.png" />
+        </image>
+        </ImageView>
+
+        <Label fx:id="potLabel" layoutX="740" layoutY="737" style="-fx-text-fill: black;">
+        <font>
+            <Font name="Arial" size="20.0" />
+        </font>
+        </Label>
 
     </Pane>
 
+    <Label fx:id="gameOverLabel" style="-fx-text-fill: red;">
+        <font>
+            <Font name="Arial" size="100.0" />
+        </font>
+    </Label>
 
 
 </StackPane>
+
+<!--<ImageView fx:id="heart1" layoutX="10" layoutY="12">-->
+<!--<image>-->
+<!--    <Image url="@/images/heart_green_35.png" />-->
+<!--</image>-->
+<!--</ImageView>-->
+
+<!--<ImageView fx:id="heart2" layoutX="55" layoutY="12">-->
+<!--<image>-->
+<!--    <Image url="@/images/heart_green_35.png" />-->
+<!--</image>-->
+<!--</ImageView>-->
+
+<!--<ImageView fx:id="heart3" layoutX="100" layoutY="12">-->
+<!--<image>-->
+<!--    <Image url="@/images/heart_green_35.png" />-->
+<!--</image>-->
+<!--</ImageView>-->
+
+<!--<ImageView fx:id="pot" layoutX="700" layoutY="720">-->
+<!--<image>-->
+<!--    <Image url="@/images/pot_50.png" />-->
+<!--</image>-->
+<!--</ImageView>-->
+
+<!--<Label fx:id="potLabel" layoutX="740" layoutY="737">-->
+<!--<font>-->
+<!--    <Font name="Arial" size="20.0" />-->
+<!--</font>-->
+<!--</Label>-->
