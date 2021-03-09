@@ -1,6 +1,5 @@
 package view;
 
-import controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +12,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         Scene scene = new Scene(root, 800, 770);
-        // scene.getRoot().requestFocus();
         primaryStage.setTitle("Frogger");
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -78,33 +78,3 @@
 
 
 </StackPane>
-
-<!--<ImageView fx:id="heart1" layoutX="10" layoutY="12">-->
-<!--<image>-->
-<!--    <Image url="@/images/heart_green_35.png" />-->
-<!--</image>-->
-<!--</ImageView>-->
-
-<!--<ImageView fx:id="heart2" layoutX="55" layoutY="12">-->
-<!--<image>-->
-<!--    <Image url="@/images/heart_green_35.png" />-->
-<!--</image>-->
-<!--</ImageView>-->
-
-<!--<ImageView fx:id="heart3" layoutX="100" layoutY="12">-->
-<!--<image>-->
-<!--    <Image url="@/images/heart_green_35.png" />-->
-<!--</image>-->
-<!--</ImageView>-->
-
-<!--<ImageView fx:id="pot" layoutX="700" layoutY="720">-->
-<!--<image>-->
-<!--    <Image url="@/images/pot_50.png" />-->
-<!--</image>-->
-<!--</ImageView>-->
-
-<!--<Label fx:id="potLabel" layoutX="740" layoutY="737">-->
-<!--<font>-->
-<!--    <Font name="Arial" size="20.0" />-->
-<!--</font>-->
-<!--</Label>-->

@@ -65,7 +65,7 @@ public class Controller {
         flies[1] = fly2;
         flies[1].relocate(400, 65);
         flies[2] = fly3;
-        flies[2].relocate(600 , 65 );
+        flies[2].relocate(600, 65);
 
 
         // Herzen in Array packen
@@ -132,7 +132,6 @@ public class Controller {
         frog.addEventHandler(KeyEvent.KEY_PRESSED, myHandler);
 
 
-
         // Changelistener auf die translateXProperty von Obstacles
         for (int i = 0; i < numberObstacles; i++) {
             obstacles[i].translateXProperty().addListener(
@@ -172,15 +171,14 @@ public class Controller {
 
     public boolean checkCollisionBorder() {
         boolean collision = false;
-            if (field.intersects(frog.getBoundsInParent())) {
+        if (field.intersects(frog.getBoundsInParent())) {
 
-            }
-            else{
-                collision = true;
-                avatarDied();
+        } else {
+            collision = true;
+            avatarDied();
 
-            }
-            return collision;
+        }
+        return collision;
 
 
     }
@@ -201,7 +199,7 @@ public class Controller {
 
     public void touchDanger() {
         if (frog.getBoundsInParent().intersects(danger.getBoundsInParent()) && !checkCollisionFriendly() && !checkCollisionBorder()) {
-             avatarDied();
+            avatarDied();
 
         }
 
@@ -214,7 +212,7 @@ public class Controller {
                 frog.setTarget(true);
                 // Hat nicht funktioniert, Fliege war zwar nicht mehr zu sehen, aber trotzdem noch da
                 //Game.getChildren().remove(flies[i]);
-                flies[i].relocate(0,0);
+                flies[i].relocate(0, 0);
                 calcPoints();
                 pointsLabel.setText(String.valueOf(points));
                 System.out.println("gefressen");
@@ -222,7 +220,8 @@ public class Controller {
         }
 
     }
-    public void calcPoints(){
+
+    public void calcPoints() {
         points += 10;
 
     }
@@ -239,7 +238,7 @@ public class Controller {
             pointsLabel.setText(String.valueOf(points));
             System.out.println("abgelegt" + countPot);
             countPot++;
-            if (countPot == 4){
+            if (countPot == 4) {
                 win();
             }
         }
@@ -373,7 +372,7 @@ public class Controller {
 
     private void avatarDied() {
         // Wenn Frosch Fliege hat
-        if (frog.isTarget() == true){
+        if (frog.isTarget() == true) {
             frog.setImgUrl("images/frog_50_38_lila.png");
             frog.setTarget(false);
         }
@@ -435,8 +434,9 @@ public class Controller {
 
     }
 
-    public void win(){
+    public void win() {
         gameOverLabel.setText("YOU WIN!\nPoints: " + points);
         frog.removeEventHandler(KeyEvent.KEY_PRESSED, myHandler);
     }
 }
+
